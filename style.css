@@ -568,3 +568,10 @@ select:focus {
     width: 100%;
   }
 }
+
+button:disabled,
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none !important;
+}

@@ -6,235 +6,152 @@ function pegarValor(nome) {
   return selecionado ? selecionado.value : null;
 }
 
-async function gerarResultado() {
-  const nome = document.getElementById("nome").value.trim();
-  const whatsapp = document.getElementById("whatsapp").value.trim();
-  const serie = document.getElementById("serie").value;
-  const meta = document.getElementById("meta").value;
-
-  const respostas = {
-    redacao: pegarValor("redacao"),
-    matematica: pegarValor("matematica"),
-    interpretacao: pegarValor("interpretacao"),
-    fisica: pegarValor("fisica"),
-    quimica: pegarValor("quimica")
-  };
-
-  if (!nome || !whatsapp || !serie || !meta) {
-    alert("Preencha nome, WhatsApp, série/ano e objetivo principal.");
-    return;
-  }
-
-  for (let area in respostas) {
-    if (!respostas[area]) {
-      alert("Responda todas as perguntas para gerar o diagnóstico.");
-      return;
-    }
-  }
-
-  const pontos = {
-    redacao: 0,
-    matematica: 0,
-    interpretacao: 0,
-    fisica: 0,
-    quimica: 0
-  };
-
-  Object.keys(respostas).forEach(area => {
-    if (respostas[area] !== "ok") {
-      pontos[area] += 2;
-    }
-  });
-
-  const ranking = Object.entries(pontos)
-    .sort((a, b) => b[1] - a[1])
-    .map(item => item[0]);
-
-  const areaPrincipal = ranking[0];
-  const areaSecundaria = ranking[1];
-  const areaTerciaria = ranking[2];
-
-  const totalErros = Object.values(pontos).reduce((a, b) => a + b, 0);
-
-  let preparo = 100 - (totalErros * 10);
-  if (preparo < 10) preparo = 10;
-
-  let nivel = "Avançado";
-  if (preparo < 50) {
-    nivel = "Iniciante";
-  } else if (preparo < 70) {
-    nivel = "Intermediário";
-  }
-
-  const trilhas = {
-    redacao: "Redação (tema, estrutura e argumentação)",
-    matematica: "Matemática (funções, sistemas e interpretação)",
-    interpretacao: "Interpretação (pegadinhas e leitura)",
-    fisica: "Física (dinâmica e aplicação)",
-    quimica: "Química (estequiometria e cálculo)"
-  };
-
-  const nomes = {
-    redacao: "Redação",
-    matematica: "Matemática",
-    interpretacao: "Interpretação",
-    fisica: "Física",
-    quimica: "Química"
-  };
-
-  const areasComErro = ranking.filter(area => pontos[area] > 0);
-
-  const listaAreas = areasComErro.length
-    ? areasComErro.map(area => nomes[area]).join(", ")
-    : "Revisão geral";
-
-  const resultadoFinal = {
-    nome,
-    whatsapp,
-    serie,
-    meta,
-    areaPrincipal,
-    areaSecundaria,
-    areaTerciaria,
-    ranking,
-    trilhaPrincipal: trilhas[areaPrincipal],
-    trilhaCombinada: `${trilhas[areaPrincipal]} + ${trilhas[areaSecundaria]}`,
-    areas: listaAreas,
-    preparo,
-    nivel,
-    data: new Date().toLocaleDateString("pt-BR"),
-    hora: new Date().toLocaleTimeString("pt-BR")
-  };
-
-  localStorage.setItem("matrizResultado", JSON.stringify(resultadoFinal));
-
-  await salvarLeadSupabase(resultadoFinal);
-
-  window.location.href = "resultado.html";
+function somenteNumeros(valor) {
+  return String(valor || "").replace(/\D/g, "");
 }
 
-async function salvarLeadSupabase(dados) {
-  const lead = {
-    nome: dados.nome,
-    whatsapp: dados.whatsapp,
-    serie: dados.serie,
-    meta: dados.meta,
-    nivel: dados.nivel,
-    preparo: dados.preparo,
-    area_principal: dados.areaPrincipal,
-    areas: dados.areas || "const SUPABASE_URL = "https://cxxlsapgodwckrhkbwpo.supabase.co";
-const SUPABASE_KEY = "sb_publishable_myoZQmhn0sAEgkvLkRGoFQ_u18JJjPm";
+function dataBrasil() {
+  return new Date().toLocaleDateString("pt-BR", { timeZone: "America/Fortaleza" });
+}
 
-function pegarValor(nome) {
-  const selecionado = document.querySelector(`input[name="${nome}"]:checked`);
-  return selecionado ? selecionado.value : null;
+function horaBrasil() {
+  return new Date().toLocaleTimeString("pt-BR", { timeZone: "America/Fortaleza" });
+}
+
+function mostrarErro(mensagem) {
+  alert(mensagem);
+  console.error(mensagem);
 }
 
 async function gerarResultado() {
-  const nome = document.getElementById("nome").value.trim();
-  const whatsapp = document.getElementById("whatsapp").value.trim();
-  const serie = document.getElementById("serie").value;
-  const meta = document.getElementById("meta").value;
-
-  const respostas = {
-    redacao: pegarValor("redacao"),
-    matematica: pegarValor("matematica"),
-    interpretacao: pegarValor("interpretacao"),
-    fisica: pegarValor("fisica"),
-    quimica: pegarValor("quimica")
-  };
-
-  if (!nome || !whatsapp || !serie || !meta) {
-    alert("Preencha nome, WhatsApp, série/ano e objetivo principal.");
-    return;
+  const botao = document.querySelector("button[onclick='gerarResultado()']");
+  if (botao) {
+    botao.disabled = true;
+    botao.innerText = "Gerando diagnóstico...";
   }
 
-  for (let area in respostas) {
-    if (!respostas[area]) {
-      alert("Responda todas as perguntas para gerar o diagnóstico.");
+  try {
+    const nome = document.getElementById("nome").value.trim();
+    const whatsapp = document.getElementById("whatsapp").value.trim();
+    const serie = document.getElementById("serie").value;
+    const meta = document.getElementById("meta").value;
+
+    const respostas = {
+      redacao: pegarValor("redacao"),
+      matematica: pegarValor("matematica"),
+      interpretacao: pegarValor("interpretacao"),
+      fisica: pegarValor("fisica"),
+      quimica: pegarValor("quimica")
+    };
+
+    if (!nome || !whatsapp || !serie || !meta) {
+      mostrarErro("Preencha nome, WhatsApp, série/ano e objetivo principal.");
       return;
     }
-  }
 
-  const pontos = {
-    redacao: 0,
-    matematica: 0,
-    interpretacao: 0,
-    fisica: 0,
-    quimica: 0
-  };
-
-  Object.keys(respostas).forEach(area => {
-    if (respostas[area] !== "ok") {
-      pontos[area] += 2;
+    const whatsappLimpo = somenteNumeros(whatsapp);
+    if (whatsappLimpo.length < 10) {
+      mostrarErro("Digite um WhatsApp válido com DDD.");
+      return;
     }
-  });
 
-  const ranking = Object.entries(pontos)
-    .sort((a, b) => b[1] - a[1])
-    .map(item => item[0]);
+    for (let area in respostas) {
+      if (!respostas[area]) {
+        mostrarErro("Responda todas as perguntas para gerar o diagnóstico.");
+        return;
+      }
+    }
 
-  const areaPrincipal = ranking[0];
-  const areaSecundaria = ranking[1];
-  const areaTerciaria = ranking[2];
+    const pontos = {
+      redacao: 0,
+      matematica: 0,
+      interpretacao: 0,
+      fisica: 0,
+      quimica: 0
+    };
 
-  const totalErros = Object.values(pontos).reduce((a, b) => a + b, 0);
+    Object.keys(respostas).forEach(area => {
+      if (respostas[area] !== "ok") {
+        pontos[area] += 2;
+      }
+    });
 
-  let preparo = 100 - (totalErros * 10);
-  if (preparo < 10) preparo = 10;
+    const ranking = Object.entries(pontos)
+      .sort((a, b) => b[1] - a[1])
+      .map(item => item[0]);
 
-  let nivel = "Avançado";
-  if (preparo < 50) {
-    nivel = "Iniciante";
-  } else if (preparo < 70) {
-    nivel = "Intermediário";
+    const areaPrincipal = ranking[0];
+    const areaSecundaria = ranking[1];
+    const areaTerciaria = ranking[2];
+
+    const totalErros = Object.values(pontos).reduce((a, b) => a + b, 0);
+
+    let preparo = 100 - (totalErros * 10);
+    if (preparo < 10) preparo = 10;
+
+    let nivel = "Avançado";
+    if (preparo < 50) {
+      nivel = "Iniciante";
+    } else if (preparo < 70) {
+      nivel = "Intermediário";
+    }
+
+    const trilhas = {
+      redacao: "Redação (tema, estrutura e argumentação)",
+      matematica: "Matemática (funções, sistemas e interpretação)",
+      interpretacao: "Interpretação (pegadinhas e leitura)",
+      fisica: "Física (dinâmica e aplicação)",
+      quimica: "Química (estequiometria e cálculo)"
+    };
+
+    const nomes = {
+      redacao: "Redação",
+      matematica: "Matemática",
+      interpretacao: "Interpretação",
+      fisica: "Física",
+      quimica: "Química"
+    };
+
+    const areasComErro = ranking.filter(area => pontos[area] > 0);
+
+    const listaAreas = areasComErro.length
+      ? areasComErro.map(area => nomes[area]).join(", ")
+      : "Revisão geral";
+
+    const resultadoFinal = {
+      nome,
+      whatsapp: whatsappLimpo,
+      serie,
+      meta,
+      areaPrincipal,
+      areaSecundaria,
+      areaTerciaria,
+      ranking,
+      trilhaPrincipal: trilhas[areaPrincipal],
+      trilhaCombinada: `${trilhas[areaPrincipal]} + ${trilhas[areaSecundaria]}`,
+      areas: listaAreas,
+      preparo,
+      nivel,
+      data: dataBrasil(),
+      hora: horaBrasil()
+    };
+
+    localStorage.setItem("matrizResultado", JSON.stringify(resultadoFinal));
+
+    const salvou = await salvarLeadSupabase(resultadoFinal);
+
+    if (!salvou) {
+      mostrarErro("O diagnóstico foi gerado, mas o lead não foi salvo no Supabase. Verifique a tabela leads_matriz e as políticas RLS.");
+      return;
+    }
+
+    window.location.href = "resultado.html";
+  } finally {
+    if (botao) {
+      botao.disabled = false;
+      botao.innerText = "Gerar diagnóstico personalizado";
+    }
   }
-
-  const trilhas = {
-    redacao: "Redação (tema, estrutura e argumentação)",
-    matematica: "Matemática (funções, sistemas e interpretação)",
-    interpretacao: "Interpretação (pegadinhas e leitura)",
-    fisica: "Física (dinâmica e aplicação)",
-    quimica: "Química (estequiometria e cálculo)"
-  };
-
-  const nomes = {
-    redacao: "Redação",
-    matematica: "Matemática",
-    interpretacao: "Interpretação",
-    fisica: "Física",
-    quimica: "Química"
-  };
-
-  const areasComErro = ranking.filter(area => pontos[area] > 0);
-
-  const listaAreas = areasComErro.length
-    ? areasComErro.map(area => nomes[area]).join(", ")
-    : "Revisão geral";
-
-  const resultadoFinal = {
-    nome,
-    whatsapp,
-    serie,
-    meta,
-    areaPrincipal,
-    areaSecundaria,
-    areaTerciaria,
-    ranking,
-    trilhaPrincipal: trilhas[areaPrincipal],
-    trilhaCombinada: `${trilhas[areaPrincipal]} + ${trilhas[areaSecundaria]}`,
-    areas: listaAreas,
-    preparo,
-    nivel,
-    data: new Date().toLocaleDateString("pt-BR"),
-    hora: new Date().toLocaleTimeString("pt-BR")
-  };
-
-  localStorage.setItem("matrizResultado", JSON.stringify(resultadoFinal));
-
-  await salvarLeadSupabase(resultadoFinal);
-
-  window.location.href = "resultado.html";
 }
 
 async function salvarLeadSupabase(dados) {
@@ -258,48 +175,20 @@ async function salvarLeadSupabase(dados) {
         "Content-Type": "application/json",
         "apikey": SUPABASE_KEY,
         "Authorization": `Bearer ${SUPABASE_KEY}`,
-        "Prefer": "return=minimal"
+        "Prefer": "return=representation"
       },
       body: JSON.stringify(lead)
     });
 
     if (!resposta.ok) {
       const erroTexto = await resposta.text();
-      alert("Erro ao salvar lead no Supabase. Verifique a tabela leads_matriz.");
-      console.error("Erro Supabase:", erroTexto);
-      return;
+      console.error("Erro Supabase:", resposta.status, erroTexto);
+      return false;
     }
 
+    return true;
   } catch (erro) {
-    alert("Erro de conexão com Supabase.");
-    console.error("Falha de conexão:", erro);
-  }
-} geral",
-    data: dados.data,
-    hora: dados.hora
-  };
-
-  try {
-    const resposta = await fetch(`${SUPABASE_URL}/rest/v1/leads_matriz`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "apikey": SUPABASE_KEY,
-        "Authorization": `Bearer ${SUPABASE_KEY}`,
-        "Prefer": "return=minimal"
-      },
-      body: JSON.stringify(lead)
-    });
-
-    if (!resposta.ok) {
-      const erroTexto = await resposta.text();
-      alert("Erro ao salvar lead no Supabase. Verifique a tabela leads_matriz.");
-      console.error("Erro Supabase:", erroTexto);
-      return;
-    }
-
-  } catch (erro) {
-    alert("Erro de conexão com Supabase.");
-    console.error("Falha de conexão:", erro);
+    console.error("Falha de conexão com Supabase:", erro);
+    return false;
   }
 }

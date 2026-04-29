@@ -37,6 +37,28 @@
   font-weight: bold;
   color: #003b8e;
 }
+
+.erro-leads {
+  background: #ffecec;
+  border-left: 6px solid #e53935;
+  color: #7a0000;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 18px;
+  font-weight: 700;
+}
+
+.barra-leads {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 16px 0 22px;
+}
+
+.campo-busca {
+  max-width: 360px;
+}
 </style>
 </head>
 
@@ -54,8 +76,14 @@
 
       <h2>Leads capturados</h2>
 
+      <div class="barra-leads">
+        <button class="btn btn-principal" onclick="carregarLeads()">Atualizar agora</button>
+        <input class="campo-busca" type="text" id="buscaLead" placeholder="Buscar por nome, WhatsApp ou área" oninput="renderizarLeads()">
+      </div>
+
       <p class="info-leads" id="contadorLeads">Carregando leads...</p>
 
+      <div id="erroLeads"></div>
       <div id="listaLeads"></div>
 
     </div>
@@ -67,6 +95,7 @@ const SUPABASE_URL = "https://cxxlsapgodwckrhkbwpo.supabase.co";
 const SUPABASE_KEY = "sb_publishable_myoZQmhn0sAEgkvLkRGoFQ_u18JJjPm";
 
 let ultimoTotal = 0;
+let leadsAtuais = [];
 
 function tocarSom() {
   const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
@@ -78,13 +107,71 @@ function mostrarAlerta() {
   alerta.className = "alerta-novo";
   alerta.innerText = "🚀 Novo lead chegou!";
   document.body.appendChild(alerta);
-
   setTimeout(() => alerta.remove(), 4000);
+}
+
+function limparWhatsApp(valor) {
+  return String(valor || "").replace(/\D/g, "");
+}
+
+function escaparHTML(valor) {
+  return String(valor ?? "").replace(/[&<>"']/g, (m) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[m]));
+}
+
+function renderizarLeads() {
+  const container = document.getElementById("listaLeads");
+  const contador = document.getElementById("contadorLeads");
+  const busca = document.getElementById("buscaLead").value.toLowerCase().trim();
+
+  const leadsFiltrados = leadsAtuais.filter(lead => {
+    const texto = `${lead.nome || ""} ${lead.whatsapp || ""} ${lead.serie || ""} ${lead.meta || ""} ${lead.nivel || ""} ${lead.area_principal || ""} ${lead.areas || ""}`.toLowerCase();
+    return texto.includes(busca);
+  });
+
+  contador.innerText = `Total de leads: ${leadsAtuais.length} | Exibindo: ${leadsFiltrados.length}`;
+
+  if (!leadsFiltrados.length) {
+    container.innerHTML = "<p>Nenhum lead encontrado.</p>";
+    return;
+  }
+
+  container.innerHTML = leadsFiltrados.map((lead, index) => {
+    const whats = limparWhatsApp(lead.whatsapp);
+    const linkWhats = whats ? `https://wa.me/55${whats}` : "#";
+
+    return `
+      <div class="resultado-card ${index === 0 ? 'novo' : ''}">
+        <h3>${escaparHTML(lead.nome || "Sem nome")}</h3>
+
+        <p><strong>WhatsApp:</strong> ${escaparHTML(lead.whatsapp || "Não informado")}</p>
+        <p><strong>Série/Ano:</strong> ${escaparHTML(lead.serie || "Não informado")}</p>
+        <p><strong>Meta:</strong> ${escaparHTML(lead.meta || "Não informado")}</p>
+        <p><strong>Nível:</strong> ${escaparHTML(lead.nivel || "Não informado")}</p>
+        <p><strong>Preparo:</strong> ${escaparHTML(lead.preparo ?? 0)}%</p>
+        <p><strong>Área principal:</strong> ${escaparHTML(lead.area_principal || "Não informado")}</p>
+        <p><strong>Áreas com dificuldade:</strong> ${escaparHTML(lead.areas || "Revisão geral")}</p>
+        <p><strong>Data:</strong> ${escaparHTML(lead.data || "")} ${escaparHTML(lead.hora || "")}</p>
+
+        <a class="btn btn-whatsapp" target="_blank" href="${linkWhats}">
+          Chamar no WhatsApp
+        </a>
+      </div>
+    `;
+  }).join("");
 }
 
 async function carregarLeads() {
   const container = document.getElementById("listaLeads");
   const contador = document.getElementById("contadorLeads");
+  const erroBox = document.getElementById("erroLeads");
+
+  erroBox.innerHTML = "";
 
   try {
     const resposta = await fetch(`${SUPABASE_URL}/rest/v1/leads_matriz?select=*&order=id.desc`, {
@@ -97,15 +184,20 @@ async function carregarLeads() {
 
     if (!resposta.ok) {
       const erroTexto = await resposta.text();
-      container.innerHTML = "<p>Erro ao carregar leads do Supabase.</p>";
+      container.innerHTML = "";
       contador.innerText = "Erro ao buscar leads.";
-      console.error("Erro Supabase:", erroTexto);
+      erroBox.innerHTML = `
+        <div class="erro-leads">
+          Erro ao carregar leads do Supabase.<br>
+          Código: ${resposta.status}<br>
+          Detalhe: ${escaparHTML(erroTexto)}
+        </div>
+      `;
+      console.error("Erro Supabase:", resposta.status, erroTexto);
       return;
     }
 
     const leads = await resposta.json();
-
-    contador.innerText = `Total de leads: ${leads.length}`;
 
     if (leads.length > ultimoTotal && ultimoTotal !== 0) {
       mostrarAlerta();
@@ -113,35 +205,17 @@ async function carregarLeads() {
     }
 
     ultimoTotal = leads.length;
-
-    if (!leads.length) {
-      container.innerHTML = "<p>Nenhum lead capturado ainda.</p>";
-      return;
-    }
-
-    container.innerHTML = leads.map((lead, index) => `
-      <div class="resultado-card ${index === 0 ? 'novo' : ''}">
-        <h3>${lead.nome || "Sem nome"}</h3>
-
-        <p><strong>WhatsApp:</strong> ${lead.whatsapp || "Não informado"}</p>
-        <p><strong>Série/Ano:</strong> ${lead.serie || "Não informado"}</p>
-        <p><strong>Meta:</strong> ${lead.meta || "Não informado"}</p>
-        <p><strong>Nível:</strong> ${lead.nivel || "Não informado"}</p>
-        <p><strong>Preparo:</strong> ${lead.preparo || 0}%</p>
-        <p><strong>Área principal:</strong> ${lead.area_principal || "Não informado"}</p>
-        <p><strong>Áreas com dificuldade:</strong> ${lead.areas || "Revisão geral"}</p>
-        <p><strong>Data:</strong> ${lead.data || ""} ${lead.hora || ""}</p>
-
-        <a class="btn btn-whatsapp" target="_blank"
-          href="https://wa.me/55${String(lead.whatsapp || '').replace(/\D/g,'')}">
-          Chamar no WhatsApp
-        </a>
-      </div>
-    `).join("");
+    leadsAtuais = leads;
+    renderizarLeads();
 
   } catch (erro) {
-    container.innerHTML = "<p>Erro de conexão com Supabase.</p>";
+    container.innerHTML = "";
     contador.innerText = "Falha na conexão.";
+    erroBox.innerHTML = `
+      <div class="erro-leads">
+        Erro de conexão com Supabase. Verifique internet, URL, chave pública e bloqueio do navegador.
+      </div>
+    `;
     console.error("Falha:", erro);
   }
 }
