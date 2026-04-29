@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Resultado Avançado | MATRIZ Educacional</title>
+  <meta name="description" content="Resultado avançado do diagnóstico ENEM da MATRIZ Educacional.">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="topo">
+  <div class="container topo-conteudo">
+    <div class="logo">
+      MATRIZ <span>Educacional</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="secao">
+    <div class="container">
+
+      <div class="titulo-secao">
+        <span class="tag tag-azul">Diagnóstico avançado</span>
+        <h2>Resultado personalizado do ENEM</h2>
+        <p>Veja suas prioridades, nível atual e plano direto de ação.</p>
+      </div>
+
+      <div id="resultadoFinal" class="resultado"></div>
+
+    </div>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="container">
+    <p>© 2026 MATRIZ Educacional — Diagnóstico Inteligente para o ENEM.</p>
+  </div>
+</footer>
+
+<script>
+  const dados = JSON.parse(localStorage.getItem("matrizResultado"));
+  const container = document.getElementById("resultadoFinal");
+
+  const nomes = {
+    redacao: "Redação",
+    matematica: "Matemática",
+    interpretacao: "Interpretação",
+    fisica: "Física",
+    quimica: "Química"
+  };
+
+  const linksTeste = {
+    redacao: "https://cincoregioes-star.github.io/DB-ENEM/",
+    matematica: "https://cincoregioes-star.github.io/matematica-teste/",
+    interpretacao: "https://cincoregioes-star.github.io/DB-ENEM/",
+    fisica: "https://cincoregioes-star.github.io/fisica-teste/",
+    quimica: "https://cincoregioes-star.github.io/quimica-teste/",
+    avancado: "https://cincoregioes-star.github.io/revisao-final-enem-teste/"
+  };
+
+  const linksPremium = {
+    redacao: "https://pay.kiwify.com.br/NsDMCx9",
+    matematica: "https://pay.kiwify.com.br/SKiUUvs",
+    interpretacao: "https://pay.kiwify.com.br/QxRaDJy",
+    fisica: "https://pay.kiwify.com.br/qTTx3pO",
+    quimica: "https://pay.kiwify.com.br/KRVxuLb",
+    avancado: "https://pay.kiwify.com.br/A20iS8u"
+  };
+
+  const planos = {
+    redacao: {
+      titulo: "Redação Inteligente ENEM",
+      risco: "Seu principal risco está em fuga ao tema, falta de estrutura, repertório fraco ou argumentação pouco desenvolvida.",
+      passo1: "Treinar estrutura de redação ENEM.",
+      passo2: "Estudar repertórios prontos e modelos comentados.",
+      passo3: "Produzir redações com foco em tema, coesão e proposta."
+    },
+    matematica: {
+      titulo: "Matemática Essencial ENEM",
+      risco: "Seu principal risco está em funções, sistemas, escala, porcentagem, gráficos ou interpretação matemática.",
+      passo1: "Treinar porcentagem, escala e regra de três.",
+      passo2: "Resolver questões de funções, gráficos e sistemas.",
+      passo3: "Revisar os erros antes de avançar para simulados maiores."
+    },
+    interpretacao: {
+      titulo: "Interpretação e Pegadinhas ENEM",
+      risco: "Seu principal risco está em leitura apressada, confusão no comando e dificuldade para eliminar alternativas.",
+      passo1: "Treinar leitura do comando da questão.",
+      passo2: "Resolver questões com pegadinhas comentadas.",
+      passo3: "Praticar eliminação de alternativas parecidas."
+    },
+    fisica: {
+      titulo: "Física Aplicada ENEM",
+      risco: "Seu principal risco está em dinâmica, força, movimento, fórmulas e aplicação no cotidiano.",
+      passo1: "Revisar força, movimento e energia.",
+      passo2: "Resolver questões contextualizadas.",
+      passo3: "Treinar aplicação de fórmulas com interpretação."
+    },
+    quimica: {
+      titulo: "Química Objetiva ENEM",
+      risco: "Seu principal risco está em estequiometria, reações químicas, mol, massa molar e interpretação dos dados.",
+      passo1: "Revisar mol, massa molar e proporção.",
+      passo2: "Treinar balanceamento e estequiometria.",
+      passo3: "Resolver exercícios com cálculo químico comentado."
+    },
+    avancado: {
+      titulo: "Revisão Final ENEM",
+      risco: "Você marcou poucas dificuldades. O ideal é revisar pontos estratégicos e treinar tempo de prova.",
+      passo1: "Fazer revisão geral dos principais conteúdos.",
+      passo2: "Resolver simulados completos.",
+      passo3: "Analisar desempenho e corrigir erros recorrentes."
+    }
+  };
+
+  if (!dados) {
+    container.style.display = "block";
+    container.innerHTML = `
+      <h2>Diagnóstico não encontrado</h2>
+      <p>Volte para a página inicial e refaça o diagnóstico.</p>
+
+      <div class="acoes">
+        <a class="btn btn-principal" href="index.html">Refazer diagnóstico</a>
+      </div>
+    `;
+  } else {
+    const temDificuldade = dados.areas && dados.areas.trim() !== "";
+    const areaPrincipal = temDificuldade ? dados.areaPrincipal : "avancado";
+    const plano = planos[areaPrincipal] || planos.avancado;
+
+    const prioridade1 = temDificuldade ? nomes[dados.areaPrincipal] : "Revisão geral";
+    const prioridade2 = temDificuldade ? nomes[dados.areaSecundaria] : "Simulado completo";
+    const prioridade3 = temDificuldade ? nomes[dados.areaTerciaria] : "Correção de erros";
+
+    const linkTeste = linksTeste[areaPrincipal] || "https://cincoregioes-star.github.io/DB-ENEM/";
+    const linkPremium = linksPremium[areaPrincipal] || "https://pay.kiwify.com.br/A20iS8u";
+
+    let prazo = "30 dias";
+    if (dados.preparo < 50) prazo = "60 dias";
+    if (dados.preparo >= 70) prazo = "15 dias";
+
+    const mensagemWhatsApp = encodeURIComponent(
+      `Olá, quero orientação com base no meu diagnóstico ENEM.
+
+Nome: ${dados.nome}
+WhatsApp: ${dados.whatsapp}
+Série/Ano: ${dados.serie}
+Objetivo: ${dados.meta}
+Nível: ${dados.nivel}
+Preparo estimado: ${dados.preparo}%
+Prioridade 1: ${prioridade1}
+Prioridade 2: ${prioridade2}
+Prioridade 3: ${prioridade3}`
+    );
+
+    container.style.display = "block";
+
+    container.innerHTML = `
+      <h2>Trilha recomendada: ${plano.titulo}</h2>
+
+      <div class="resultado-card destaque">
+        <h3>Nível atual</h3>
+        <p><strong>${dados.nivel}</strong></p>
+
+        <div class="barra-preparo">
+          <div class="barra-preparo-interna" style="width:${dados.preparo}%;">
+            ${dados.preparo}%
+          </div>
+        </div>
+
+        <p class="texto-pequeno">Preparo estimado com base nas respostas do diagnóstico.</p>
+      </div>
+
+      <div class="resultado-card">
+        <h3>Dados do aluno</h3>
+        <p><strong>Nome:</strong> ${dados.nome}</p>
+        <p><strong>WhatsApp:</strong> ${dados.whatsapp}</p>
+        <p><strong>Série/Ano:</strong> ${dados.serie}</p>
+        <p><strong>Objetivo:</strong> ${dados.meta}</p>
+        <p><strong>Data:</strong> ${dados.data}</p>
+      </div>
+
+      <div class="resultado-card destaque">
+        <h3>Ranking de prioridade</h3>
+        <p><strong>1º foco:</strong> ${prioridade1}</p>
+        <p><strong>2º foco:</strong> ${prioridade2}</p>
+        <p><strong>3º foco:</strong> ${prioridade3}</p>
+      </div>
+
+      <div class="resultado-card">
+        <h3>Seu principal risco no ENEM</h3>
+        <p>${plano.risco}</p>
+      </div>
+
+      <div class="resultado-card destaque">
+        <h3>Plano direto em 3 passos</h3>
+        <p><strong>Prazo estimado:</strong> ${prazo}</p>
+        <p><strong>Passo 1:</strong> ${plano.passo1}</p>
+        <p><strong>Passo 2:</strong> ${plano.passo2}</p>
+        <p><strong>Passo 3:</strong> ${plano.passo3}</p>
+      </div>
+
+      <div class="resultado-card">
+        <h3>Trilha combinada</h3>
+        <p>${temDificuldade ? dados.trilhaCombinada : "Revisão geral + simulado completo"}</p>
+      </div>
+
+      <div class="resultado-card">
+        <h3>Contato MATRIZ Educacional</h3>
+        <p><strong>WhatsApp:</strong> (85) 99712-0397</p>
+        <p><strong>Email:</strong> professorsrcarlos@gmail.com</p>
+      </div>
+
+      <div class="alerta">
+        ⚠️ Comece pelo primeiro foco do ranking. Corrigir o erro principal antes dos simulados completos aumenta a eficiência do estudo.
+      </div>
+
+      <div class="acoes">
+        <a class="btn btn-principal" target="_blank" href="${linkTeste}">
+          TESTE (BANCO DE DADOS ENEM)
+        </a>
+
+        <a class="btn btn-secundario" target="_blank" href="${linkPremium}">
+          PREMIUM (Kiwify)
+        </a>
+
+        <a class="btn btn-secundario" target="_blank" href="https://cincoregioes-star.github.io/DB-ENEM/">
+          Ver Banco de Dados ENEM completo
+        </a>
+
+        <a class="btn btn-whatsapp" target="_blank"
+          href="https://wa.me/5585997120397?text=${mensagemWhatsApp}">
+          Falar no WhatsApp
+        </a>
+
+        <a class="btn btn-secundario" href="mailto:professorsrcarlos@gmail.com">
+          Enviar email
+        </a>
+
+        <a class="btn btn-secundario" href="index.html">
+          Refazer diagnóstico
+        </a>
+      </div>
+    `;
+  }
+</script>
+
+</body>
+</html>

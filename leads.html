@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leads | MATRIZ</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+.alerta-novo {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #ffcc00;
+  color: #000;
+  padding: 15px 20px;
+  border-radius: 12px;
+  font-weight: bold;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  z-index: 9999;
+  animation: aparecer 0.4s ease;
+}
+
+@keyframes aparecer {
+  from {transform: translateY(-20px); opacity:0;}
+  to {transform: translateY(0); opacity:1;}
+}
+
+.novo {
+  border-left: 6px solid #00c853;
+}
+</style>
+
+</head>
+
+<body>
+
+<header class="topo">
+<div class="container topo-conteudo">
+<div class="logo">MATRIZ <span>Educacional</span></div>
+</div>
+</header>
+
+<main>
+<section class="secao">
+<div class="container">
+
+<h2>Leads capturados</h2>
+
+<div id="listaLeads"></div>
+
+</div>
+</section>
+</main>
+
+<script>
+let ultimoTotal = 0;
+
+function tocarSom() {
+  const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
+  audio.play();
+}
+
+function mostrarAlerta() {
+  const alerta = document.createElement("div");
+  alerta.className = "alerta-novo";
+  alerta.innerText = "🚀 Novo lead chegou!";
+  document.body.appendChild(alerta);
+
+  setTimeout(() => alerta.remove(), 4000);
+}
+
+function carregarLeads() {
+  const leads = JSON.parse(localStorage.getItem("matrizLeads")) || [];
+  const container = document.getElementById("listaLeads");
+
+  if (leads.length > ultimoTotal) {
+    mostrarAlerta();
+    tocarSom();
+  }
+
+  ultimoTotal = leads.length;
+
+  container.innerHTML = leads.reverse().map((lead, index) => `
+    <div class="resultado-card ${index === 0 ? 'novo' : ''}">
+      <h3>${lead.nome}</h3>
+      <p><strong>WhatsApp:</strong> ${lead.whatsapp}</p>
+      <p><strong>Nível:</strong> ${lead.nivel}</p>
+      <p><strong>Preparo:</strong> ${lead.preparo}%</p>
+
+      <a class="btn btn-whatsapp" target="_blank"
+        href="https://wa.me/55${lead.whatsapp.replace(/\D/g,'')}">
+        Chamar no WhatsApp
+      </a>
+    </div>
+  `).join("");
+}
+
+setInterval(carregarLeads, 5000);
+carregarLeads();
+</script>
+
+</body>
+</html>
