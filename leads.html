@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Leads | MATRIZ</title>
 
 <link rel="stylesheet" href="style.css">
@@ -23,43 +24,53 @@
 }
 
 @keyframes aparecer {
-  from {transform: translateY(-20px); opacity:0;}
-  to {transform: translateY(0); opacity:1;}
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 .novo {
   border-left: 6px solid #00c853;
 }
-</style>
 
+.info-leads {
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #003b8e;
+}
+</style>
 </head>
 
 <body>
 
 <header class="topo">
-<div class="container topo-conteudo">
-<div class="logo">MATRIZ <span>Educacional</span></div>
-</div>
+  <div class="container topo-conteudo">
+    <div class="logo">MATRIZ <span>Educacional</span></div>
+  </div>
 </header>
 
 <main>
-<section class="secao">
-<div class="container">
+  <section class="secao">
+    <div class="container">
 
-<h2>Leads capturados</h2>
+      <h2>Leads capturados</h2>
 
-<div id="listaLeads"></div>
+      <p class="info-leads" id="contadorLeads">Carregando leads...</p>
 
-</div>
-</section>
+      <div id="listaLeads"></div>
+
+    </div>
+  </section>
 </main>
 
 <script>
+const SUPABASE_URL = "https://cxxlsapgodwckrhkbwpo.supabase.co";
+const SUPABASE_KEY = "sb_publishable_myoZQmhn0sAEgkvLkRGoFQ_u18JJjPm";
+
 let ultimoTotal = 0;
 
 function tocarSom() {
   const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
-  audio.play();
+  audio.play().catch(() => {});
 }
 
 function mostrarAlerta() {
@@ -71,34 +82,72 @@ function mostrarAlerta() {
   setTimeout(() => alerta.remove(), 4000);
 }
 
-function carregarLeads() {
-  const leads = JSON.parse(localStorage.getItem("matrizLeads")) || [];
+async function carregarLeads() {
   const container = document.getElementById("listaLeads");
+  const contador = document.getElementById("contadorLeads");
 
-  if (leads.length > ultimoTotal) {
-    mostrarAlerta();
-    tocarSom();
+  try {
+    const resposta = await fetch(`${SUPABASE_URL}/rest/v1/leads_matriz?select=*&order=id.desc`, {
+      method: "GET",
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": `Bearer ${SUPABASE_KEY}`
+      }
+    });
+
+    if (!resposta.ok) {
+      const erroTexto = await resposta.text();
+      container.innerHTML = "<p>Erro ao carregar leads do Supabase.</p>";
+      contador.innerText = "Erro ao buscar leads.";
+      console.error("Erro Supabase:", erroTexto);
+      return;
+    }
+
+    const leads = await resposta.json();
+
+    contador.innerText = `Total de leads: ${leads.length}`;
+
+    if (leads.length > ultimoTotal && ultimoTotal !== 0) {
+      mostrarAlerta();
+      tocarSom();
+    }
+
+    ultimoTotal = leads.length;
+
+    if (!leads.length) {
+      container.innerHTML = "<p>Nenhum lead capturado ainda.</p>";
+      return;
+    }
+
+    container.innerHTML = leads.map((lead, index) => `
+      <div class="resultado-card ${index === 0 ? 'novo' : ''}">
+        <h3>${lead.nome || "Sem nome"}</h3>
+
+        <p><strong>WhatsApp:</strong> ${lead.whatsapp || "Não informado"}</p>
+        <p><strong>Série/Ano:</strong> ${lead.serie || "Não informado"}</p>
+        <p><strong>Meta:</strong> ${lead.meta || "Não informado"}</p>
+        <p><strong>Nível:</strong> ${lead.nivel || "Não informado"}</p>
+        <p><strong>Preparo:</strong> ${lead.preparo || 0}%</p>
+        <p><strong>Área principal:</strong> ${lead.area_principal || "Não informado"}</p>
+        <p><strong>Áreas com dificuldade:</strong> ${lead.areas || "Revisão geral"}</p>
+        <p><strong>Data:</strong> ${lead.data || ""} ${lead.hora || ""}</p>
+
+        <a class="btn btn-whatsapp" target="_blank"
+          href="https://wa.me/55${String(lead.whatsapp || '').replace(/\D/g,'')}">
+          Chamar no WhatsApp
+        </a>
+      </div>
+    `).join("");
+
+  } catch (erro) {
+    container.innerHTML = "<p>Erro de conexão com Supabase.</p>";
+    contador.innerText = "Falha na conexão.";
+    console.error("Falha:", erro);
   }
-
-  ultimoTotal = leads.length;
-
-  container.innerHTML = leads.reverse().map((lead, index) => `
-    <div class="resultado-card ${index === 0 ? 'novo' : ''}">
-      <h3>${lead.nome}</h3>
-      <p><strong>WhatsApp:</strong> ${lead.whatsapp}</p>
-      <p><strong>Nível:</strong> ${lead.nivel}</p>
-      <p><strong>Preparo:</strong> ${lead.preparo}%</p>
-
-      <a class="btn btn-whatsapp" target="_blank"
-        href="https://wa.me/55${lead.whatsapp.replace(/\D/g,'')}">
-        Chamar no WhatsApp
-      </a>
-    </div>
-  `).join("");
 }
 
-setInterval(carregarLeads, 5000);
 carregarLeads();
+setInterval(carregarLeads, 5000);
 </script>
 
 </body>
