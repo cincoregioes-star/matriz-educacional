@@ -7,214 +7,80 @@
 <title>Leads | MATRIZ Educacional</title>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-body {
-  background: #f4f7fb;
-  color: #172033;
-}
+* {margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body {background:#f4f7fb;color:#172033}
 
 .topo {
-  background: linear-gradient(135deg, #071c3f, #004aad);
-  color: #fff;
-  padding: 22px 0;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  background: linear-gradient(135deg,#071c3f,#004aad);
+  color:#fff;
+  padding:22px 0;
 }
 
-.container {
-  width: 94%;
-  max-width: 1180px;
-  margin: 0 auto;
-}
+.container {width:94%;max-width:1180px;margin:auto}
 
-.logo {
-  font-size: 28px;
-  font-weight: 900;
-}
+.logo {font-size:28px;font-weight:900}
+.logo span {color:#ffcc00}
 
-.logo span {
-  color: #ffcc00;
-}
-
-.secao {
-  padding: 36px 0;
-}
+.secao {padding:36px 0}
 
 .painel-topo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  margin-bottom: 22px;
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:20px;
 }
 
-h1 {
-  color: #071c3f;
-  font-size: 32px;
-}
+h1 {font-size:30px}
 
-.controles {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-button,
-input {
-  padding: 13px 15px;
-  border-radius: 12px;
-  border: 1px solid #cbd5e1;
-  font-size: 15px;
+button,input {
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #ccc;
 }
 
 button {
-  background: #004aad;
-  color: #fff;
-  font-weight: 800;
-  cursor: pointer;
+  background:#004aad;
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
 }
 
-button:hover {
-  background: #00357d;
-}
-
-input {
-  min-width: 260px;
-}
-
-.info-leads {
-  background: #fff;
-  padding: 18px;
-  border-radius: 18px;
-  margin-bottom: 22px;
-  box-shadow: 0 8px 22px rgba(0,0,0,0.08);
-  color: #004aad;
-  font-weight: 900;
+.btn-som {
+  background:#ffcc00;
+  color:#071c3f;
 }
 
 .grid-leads {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
 }
 
-.card-lead {
-  background: #fff;
-  border-radius: 22px;
-  padding: 22px;
-  box-shadow: 0 10px 28px rgba(0,0,0,0.09);
-  border-left: 7px solid #004aad;
+.card {
+  background:#fff;
+  padding:20px;
+  border-radius:18px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.1);
+  border-left:6px solid #004aad;
 }
 
-.card-lead.novo {
-  border-left-color: #00c853;
-  animation: piscar 1.2s ease-in-out 3;
+.card.novo {
+  border-left:6px solid #00c853;
 }
 
-@keyframes piscar {
-  0% { box-shadow: 0 0 0 rgba(0,200,83,0); }
-  50% { box-shadow: 0 0 24px rgba(0,200,83,0.45); }
-  100% { box-shadow: 0 0 0 rgba(0,200,83,0); }
+.alerta {
+  position:fixed;
+  top:20px;
+  right:20px;
+  background:#ffcc00;
+  padding:15px;
+  border-radius:12px;
+  font-weight:bold;
 }
 
-.card-lead h3 {
-  color: #071c3f;
-  font-size: 22px;
-  margin-bottom: 12px;
-}
-
-.card-lead p {
-  margin: 7px 0;
-  color: #334155;
-}
-
-.card-lead strong {
-  color: #071c3f;
-}
-
-.acoes-card {
-  margin-top: 16px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.btn-whatsapp {
-  display: inline-block;
-  background: #25d366;
-  color: #fff;
-  text-decoration: none;
-  padding: 12px 16px;
-  border-radius: 12px;
-  font-weight: 900;
-}
-
-.btn-email {
-  display: inline-block;
-  background: #ffcc00;
-  color: #071c3f;
-  text-decoration: none;
-  padding: 12px 16px;
-  border-radius: 12px;
-  font-weight: 900;
-}
-
-.alerta-novo {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: #ffcc00;
-  color: #071c3f;
-  padding: 18px 24px;
-  border-radius: 16px;
-  font-weight: 900;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.25);
-  z-index: 9999;
-  animation: aparecer 0.35s ease;
-}
-
-@keyframes aparecer {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.status-online {
-  display: inline-block;
-  background: #dcfce7;
-  color: #166534;
-  padding: 8px 13px;
-  border-radius: 999px;
-  font-weight: 900;
-  font-size: 14px;
-}
-
-.erro {
-  background: #fee2e2;
-  color: #991b1b;
-  padding: 18px;
-  border-radius: 16px;
-  font-weight: bold;
-}
-
-@media (max-width: 800px) {
-  .grid-leads {
-    grid-template-columns: 1fr;
-  }
-
-  input,
-  button {
-    width: 100%;
-  }
-
-  .painel-topo {
-    align-items: stretch;
-  }
+@media(max-width:800px){
+  .grid-leads{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -227,162 +93,118 @@ input {
   </div>
 </header>
 
-<main>
-  <section class="secao">
-    <div class="container">
+<section class="secao">
+<div class="container">
 
-      <div class="painel-topo">
-        <div>
-          <h1>Leads capturados</h1>
-          <span class="status-online">● Monitoramento ativo</span>
-        </div>
+<div class="painel-topo">
+  <div>
+    <h1>Leads capturados</h1>
+    <p id="status">Som desativado</p>
+  </div>
 
-        <div class="controles">
-          <button onclick="carregarLeads(true)">Atualizar agora</button>
-          <input type="text" id="busca" placeholder="Buscar por nome ou WhatsApp" oninput="filtrarLeads()">
-        </div>
-      </div>
+  <div>
+    <button class="btn-som" onclick="ativarSom()">Ativar som</button>
+    <button onclick="carregarLeads(true)">Atualizar</button>
+    <input id="busca" placeholder="Buscar..." oninput="filtrar()">
+  </div>
+</div>
 
-      <div class="info-leads" id="contadorLeads">Carregando leads...</div>
+<div id="contador"></div>
+<div id="lista" class="grid-leads"></div>
 
-      <div id="listaLeads" class="grid-leads"></div>
-
-    </div>
-  </section>
-</main>
+</div>
+</section>
 
 <script>
 const SUPABASE_URL = "https://cxxlsapgodwckrhkbwpo.supabase.co";
 const SUPABASE_KEY = "sb_publishable_myoZQmhn0sAEgkvLkRGoFQ_u18JJjPm";
 
-let ultimoTotal = Number(localStorage.getItem("ultimoTotalLeadsMatriz") || 0);
-let leadsGlobais = [];
+let leadsGlobal = [];
+let ultimoTotal = 0;
+let somAtivo = false;
 
+// 🔊 SOM DE ARPA (CORRETO)
+const audioArpa = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
+audioArpa.volume = 1;
+
+function ativarSom(){
+  somAtivo = true;
+  audioArpa.play().catch(()=>{});
+  document.getElementById("status").innerText = "Som ativado";
+}
+
+// 🔊 FUNÇÃO PEDIDA (ARPA)
 function tocarSom() {
-  const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
-  audio.volume = 1;
-  audio.play().catch(() => {});
+  if(!somAtivo) return;
+
+  audioArpa.currentTime = 0;
+  audioArpa.play().catch(() => {});
 }
 
-function mostrarAlerta(texto = "🚀 Novo lead chegou!") {
-  const alerta = document.createElement("div");
-  alerta.className = "alerta-novo";
-  alerta.innerText = texto;
-  document.body.appendChild(alerta);
-
-  setTimeout(() => alerta.remove(), 5000);
+function alerta(){
+  const div = document.createElement("div");
+  div.className = "alerta";
+  div.innerText = "🚀 Novo lead!";
+  document.body.appendChild(div);
+  setTimeout(()=>div.remove(),4000);
 }
 
-function limparTexto(valor) {
-  return String(valor || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-}
-
-function formatarWhatsApp(numero) {
-  return String(numero || "").replace(/\D/g, "");
-}
-
-async function carregarLeads(manual = false) {
-  const container = document.getElementById("listaLeads");
-  const contador = document.getElementById("contadorLeads");
-
-  try {
-    const resposta = await fetch(`${SUPABASE_URL}/rest/v1/leads_matriz?select=*&order=id.desc`, {
-      method: "GET",
-      headers: {
-        "apikey": SUPABASE_KEY,
-        "Authorization": `Bearer ${SUPABASE_KEY}`
-      }
-    });
-
-    if (!resposta.ok) {
-      const erroTexto = await resposta.text();
-      contador.innerHTML = `<div class="erro">Erro ao carregar leads do Supabase.</div>`;
-      console.error("Erro Supabase:", erroTexto);
-      return;
+async function carregarLeads(manual=false){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/leads_matriz?select=*&order=id.desc`,{
+    headers:{
+      apikey:SUPABASE_KEY,
+      Authorization:`Bearer ${SUPABASE_KEY}`
     }
-
-    const leads = await resposta.json();
-    leadsGlobais = leads;
-
-    contador.innerHTML = `Total de leads: ${leads.length} | Exibindo: ${leads.length}`;
-
-    if (leads.length > ultimoTotal && ultimoTotal !== 0) {
-      mostrarAlerta("🚀 Novo lead recebido!");
-      tocarSom();
-    }
-
-    if (manual) {
-      mostrarAlerta("✅ Lista atualizada!");
-    }
-
-    ultimoTotal = leads.length;
-    localStorage.setItem("ultimoTotalLeadsMatriz", String(ultimoTotal));
-
-    renderizarLeads(leads);
-
-  } catch (erro) {
-    contador.innerHTML = `<div class="erro">Erro de conexão com Supabase.</div>`;
-    console.error("Falha:", erro);
-  }
-}
-
-function renderizarLeads(leads) {
-  const container = document.getElementById("listaLeads");
-  const contador = document.getElementById("contadorLeads");
-
-  contador.innerHTML = `Total de leads: ${leadsGlobais.length} | Exibindo: ${leads.length}`;
-
-  if (!leads.length) {
-    container.innerHTML = `<p>Nenhum lead encontrado.</p>`;
-    return;
-  }
-
-  container.innerHTML = leads.map((lead, index) => {
-    const whats = formatarWhatsApp(lead.whatsapp);
-    const nome = lead.nome || "Sem nome";
-
-    return `
-      <div class="card-lead ${index === 0 ? 'novo' : ''}">
-        <h3>${nome}</h3>
-
-        <p><strong>WhatsApp:</strong> ${lead.whatsapp || "Não informado"}</p>
-        <p><strong>Série/Ano:</strong> ${lead.serie || "Não informado"}</p>
-        <p><strong>Meta:</strong> ${lead.meta || "Não informado"}</p>
-        <p><strong>Nível:</strong> ${lead.nivel || "Não informado"}</p>
-        <p><strong>Preparo:</strong> ${lead.preparo || 0}%</p>
-        <p><strong>Área principal:</strong> ${lead.area_principal || "Não informado"}</p>
-        <p><strong>Áreas com dificuldade:</strong> ${lead.areas || "Revisão geral"}</p>
-        <p><strong>Data:</strong> ${lead.data || ""} ${lead.hora || ""}</p>
-
-        <div class="acoes-card">
-          <a class="btn-whatsapp" target="_blank" href="https://wa.me/55${whats}">
-            Chamar no WhatsApp
-          </a>
-
-          <a class="btn-email" href="mailto:professorsrcarlos@gmail.com?subject=Lead MATRIZ - ${encodeURIComponent(nome)}">
-            Enviar email
-          </a>
-        </div>
-      </div>
-    `;
-  }).join("");
-}
-
-function filtrarLeads() {
-  const termo = limparTexto(document.getElementById("busca").value);
-
-  const filtrados = leadsGlobais.filter(lead => {
-    const nome = limparTexto(lead.nome);
-    const whats = limparTexto(lead.whatsapp);
-    const meta = limparTexto(lead.meta);
-    return nome.includes(termo) || whats.includes(termo) || meta.includes(termo);
   });
 
-  renderizarLeads(filtrados);
+  const dados = await res.json();
+  leadsGlobal = dados;
+
+  document.getElementById("contador").innerText = "Total: "+dados.length;
+
+  if(dados.length > ultimoTotal && ultimoTotal !== 0){
+    alerta();
+    tocarSom();
+  }
+
+  if(manual) alerta();
+
+  ultimoTotal = dados.length;
+
+  render(dados);
+}
+
+function render(lista){
+  const el = document.getElementById("lista");
+
+  el.innerHTML = lista.map((l,i)=>`
+    <div class="card ${i===0?'novo':''}">
+      <h3>${l.nome||'Sem nome'}</h3>
+      <p><b>Whats:</b> ${l.whatsapp}</p>
+      <p><b>Nível:</b> ${l.nivel}</p>
+      <p><b>Preparo:</b> ${l.preparo}%</p>
+      <p><b>Área:</b> ${l.area_principal}</p>
+
+      <a target="_blank" href="https://wa.me/55${String(l.whatsapp).replace(/\D/g,'')}">
+        WhatsApp
+      </a>
+    </div>
+  `).join("");
+}
+
+function filtrar(){
+  const t = document.getElementById("busca").value.toLowerCase();
+
+  const f = leadsGlobal.filter(l =>
+    (l.nome||'').toLowerCase().includes(t) ||
+    (l.whatsapp||'').includes(t)
+  );
+
+  render(f);
 }
 
 carregarLeads();
-setInterval(() => carregarLeads(false), 5000);
+setInterval(()=>carregarLeads(),5000);
 </script>
 
 </body>

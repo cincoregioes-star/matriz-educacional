@@ -575,3 +575,66 @@ button:disabled,
   cursor: not-allowed;
   transform: none !important;
 }
+
+.simulados-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.simulado-card {
+  display: block;
+  background: #fff;
+  color: #071c3f;
+  text-decoration: none;
+  padding: 24px;
+  border-radius: 22px;
+  border: 1px solid #dce6f5;
+  box-shadow: 0 9px 26px rgba(0, 0, 0, 0.08);
+  transition: 0.25s;
+}
+
+.simulado-card:hover {
+  transform: translateY(-6px);
+  border-color: #004aad;
+  box-shadow: 0 14px 34px rgba(0, 74, 173, 0.16);
+}
+
+.simulado-card strong {
+  display: block;
+  color: #004aad;
+  font-size: 21px;
+  margin-bottom: 8px;
+}
+
+.simulado-card span {
+  display: block;
+  color: #4a5568;
+  font-weight: 700;
+}
+
+.simulado-card.destaque {
+  background: linear-gradient(135deg, #25d366, #128c7e);
+  color: #fff;
+}
+
+.simulado-card.destaque strong,
+.simulado-card.destaque span {
+  color: #fff;
+}
+
+.cta-botoes-final {
+  justify-content: center;
+}
+
+@media (max-width: 1050px) {
+  .simulados-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .simulados-grid {
+    grid-template-columns: 1fr;
+  }
+}

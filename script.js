@@ -141,11 +141,15 @@ async function gerarResultado() {
     const salvou = await salvarLeadSupabase(resultadoFinal);
 
     if (!salvou) {
-      mostrarErro("O diagnóstico foi gerado, mas o lead não foi salvo no Supabase. Verifique a tabela leads_matriz e as políticas RLS.");
+      mostrarErro("Diagnóstico gerado, mas não salvou no banco. Verifique Supabase.");
       return;
     }
 
     window.location.href = "resultado.html";
+
+  } catch (erro) {
+    console.error(erro);
+    mostrarErro("Erro ao gerar diagnóstico.");
   } finally {
     if (botao) {
       botao.disabled = false;
@@ -182,13 +186,14 @@ async function salvarLeadSupabase(dados) {
 
     if (!resposta.ok) {
       const erroTexto = await resposta.text();
-      console.error("Erro Supabase:", resposta.status, erroTexto);
+      console.error("Erro Supabase:", erroTexto);
       return false;
     }
 
     return true;
+
   } catch (erro) {
-    console.error("Falha de conexão com Supabase:", erro);
+    console.error("Erro conexão:", erro);
     return false;
   }
 }
