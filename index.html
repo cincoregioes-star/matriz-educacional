@@ -81,6 +81,34 @@
       </div>
     </section>
 
+
+    <section class="radar-copa-box" id="radar-copa-recompensa">
+      <div class="container radar-copa-inner">
+        <div>
+          <span class="tag tag-amarela">🎁 Radar Copa 2026</span>
+          <h2>Ganhe figurinhas no álbum estudando na MATRIZ Educacional</h2>
+          <p>
+            Quem chega pelo Radar Copa pode ganhar recompensas no álbum
+            <strong>História em Campo 2026</strong>. Faça diagnóstico, acesse simulados
+            e volte ao álbum para verificar as figurinhas conquistadas.
+          </p>
+
+          <div class="radar-copa-actions">
+            <a class="btn btn-principal" href="https://cincoregioes-star.github.io/RADAR%20COPA%202026%20COM%20%C3%81LBUM/album/index.html?origem=radar_copa_album" target="_blank" rel="noopener noreferrer">Abrir álbum</a>
+            <a class="btn btn-secundario" href="#diagnostico">Fazer diagnóstico</a>
+            <a class="btn btn-secundario" href="#simulados">Acessar simulados</a>
+          </div>
+        </div>
+
+        <div class="radar-copa-regras">
+          <div><b>Acessou a MATRIZ pelo Radar Copa:</b> +1 figurinha</div>
+          <div><b>Fez diagnóstico:</b> recompensa registrada para o álbum</div>
+          <div><b>Acertou metade em simulado:</b> total de 3 figurinhas</div>
+          <div><b>Comprou qualquer premium:</b> +10 pacotes no álbum</div>
+        </div>
+      </div>
+    </section>
+
     <section class="secao" id="problemas">
       <div class="container">
 
@@ -387,27 +415,27 @@
         </div>
 
         <div class="simulados-grid">
-          <a class="simulado-card" target="_blank" href="https://cincoregioes-star.github.io/DB-ENEM/">
+          <a class="simulado-card" target="_blank" href="https://cincoregioes-star.github.io/DB-ENEM/?origem=radar_copa_album">
             <strong>DB ENEM</strong>
             <span>Banco de Dados ENEM completo</span>
           </a>
 
-          <a class="simulado-card" target="_blank" href="https://cincoregioes-star.github.io/matematica-teste/">
+          <a class="simulado-card" target="_blank" href="https://cincoregioes-star.github.io/matematica-teste/?origem=radar_copa_album">
             <strong>Matemática Teste</strong>
             <span>Questões para diagnóstico inicial</span>
           </a>
 
-          <a class="simulado-card" target="_blank" href="https://cincoregioes-star.github.io/fisica-teste/">
+          <a class="simulado-card" target="_blank" href="https://cincoregioes-star.github.io/fisica-teste/?origem=radar_copa_album">
             <strong>Física Teste</strong>
             <span>Treino gratuito por módulo</span>
           </a>
 
-          <a class="simulado-card" target="_blank" href="https://cincoregioes-star.github.io/quimica-teste/">
+          <a class="simulado-card" target="_blank" href="https://cincoregioes-star.github.io/quimica-teste/?origem=radar_copa_album">
             <strong>Química Teste</strong>
             <span>Questões com foco no ENEM</span>
           </a>
 
-          <a class="simulado-card" target="_blank" href="https://cincoregioes-star.github.io/revisao-final-enem-teste/">
+          <a class="simulado-card" target="_blank" href="https://cincoregioes-star.github.io/revisao-final-enem-teste/?origem=radar_copa_album">
             <strong>Revisão Final</strong>
             <span>Simulado para fechamento de estudo</span>
           </a>
@@ -460,7 +488,7 @@
         <div class="acoes cta-botoes-final">
           <a href="#diagnostico" class="btn btn-principal">Testar diagnóstico</a>
           <a href="#simulados" class="btn btn-secundario">Ver simulados</a>
-          <a target="_blank" href="https://cincoregioes-star.github.io/DB-ENEM/" class="btn btn-secundario">DB ENEM</a>
+          <a target="_blank" href="https://cincoregioes-star.github.io/DB-ENEM/?origem=radar_copa_album" class="btn btn-secundario">DB ENEM</a>
           <a target="_blank" href="leads.html" class="btn btn-whatsapp">Painel de Leads</a>
         </div>
       </div>
@@ -475,5 +503,26 @@
   </footer>
 
   <script src="script.js?v=20260429-1"></script>
+  <script src="radar-copa-parceiro.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function(){
+      const btnDiagnostico = document.querySelector('button[onclick="gerarResultado()"]');
+      if(btnDiagnostico){
+        btnDiagnostico.addEventListener("click", function(){
+          setTimeout(function(){
+            if(window.RadarCopaParceiro && typeof RadarCopaParceiro.adicionarRecompensa === "function"){
+              RadarCopaParceiro.adicionarRecompensa({
+                tipo: "diagnostico_matriz",
+                descricao: "Você fez o diagnóstico da MATRIZ Educacional pelo Radar Copa.",
+                figurinhas: 1,
+                idSimulado: "diagnostico_matriz"
+              });
+            }
+          }, 800);
+        });
+      }
+    });
+  </script>
 </body>
 </html>
